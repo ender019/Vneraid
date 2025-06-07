@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 
 function App() {
   const [tg, setTg] = useState(null);
   const [isSending, setIsSending] = useState(false);
+  const isMac = useRef(navigator.platform === "MacIntel");
 
   useEffect(() => {
     const webApp = window.Telegram?.WebApp;
@@ -10,77 +11,85 @@ function App() {
       webApp.ready();
       setTg(webApp);
       webApp.expand();
-      
-      // Critical fix for macOS
-      if (navigator.platform === "MacIntel") {
-        webApp.enableClosingConfirmation(); // Prevents automatic closing
-        console.log("macOS protections enabled");
+
+      // Critical macOS-specific initialization
+      if (isMac.current) {
+        webApp.enableClosingConfirmation();
+        webApp.MainButton.setText("Processing...");
+        webApp.MainButton.onClick(handleMainButtonClick);
+        console.log("Initialized macOS protections");
       }
     }
+
+    return () => {
+      // Cleanup
+      if (tg?.MainButton) {
+        tg.MainButton.offClick(handleMainButtonClick);
+      }
+    };
   }, []);
 
-  const sendToBot = async () => {
+  const handleMainButtonClick = () => {
     if (!tg) return;
-    
+    sendDataToBot();
+  };
+
+  const sendDataToBot = () => {
+    console.log("Sending data...");
+    tg.sendData(JSON.stringify({ 
+      command: "message",
+      text: "Hello from WebApp",
+      platform: isMac.current ? "macOS" : "mobile"
+    }));
+  };
+
+  const sendToBot = () => {
+    if (!tg || isSending) return;
     setIsSending(true);
-    
-    try {
-      // Main difference: Use MainButton on macOS instead of immediate sendData
-      if (navigator.platform === "MacIntel") {
-        tg.MainButton.setText("Processing...").show();
-        await new Promise(resolve => setTimeout(resolve, 300)); // Small delay
-        
-        tg.sendData(JSON.stringify({ command: "hello" }));
-        
-        // Keep WebApp open for 1.5s so user sees feedback
-        setTimeout(() => {
-          tg.MainButton.hide();
-          setIsSending(false);
-        }, 1500);
-      } else {
-        // Normal mobile behavior
-        tg.sendData(JSON.stringify({ command: "hello" }));
-        setIsSending(false);
-      }
-    } catch (error) {
-      console.error("Send error:", error);
+
+    if (isMac.current) {
+      // macOS workaround - use MainButton flow
+      tg.MainButton.show();
+      tg.MainButton.setParams({ is_active: true, is_visible: true });
+    } else {
+      // Mobile - direct send
+      sendDataToBot();
       setIsSending(false);
-      tg.MainButton.hide();
     }
   };
 
   return (
     <div style={{
-      padding: 20,
-      fontFamily: 'system-ui',
-      maxWidth: '100%',
-      boxSizing: 'border-box'
+      padding: "20px",
+      fontFamily: "-apple-system, BlinkMacSystemFont, sans-serif",
+      textAlign: "center"
     }}>
-      <h1>Telegram WebApp Demoooo</h1>
+      <h1>Telegram WebApp Demo</h1>
       <button
         onClick={sendToBot}
         disabled={isSending}
         style={{
-          background: isSending ? '#5cb85c' : '#0088cc',
-          color: 'white',
-          padding: '12px 24px',
-          border: 'none',
-          borderRadius: '8px',
-          fontSize: '16px',
-          cursor: 'pointer',
-          transition: 'all 0.3s'
+          backgroundColor: isSending ? "#4CAF50" : "#0088CC",
+          color: "white",
+          padding: "12px 24px",
+          border: "none",
+          borderRadius: "8px",
+          fontSize: "16px",
+          cursor: "pointer",
+          boxShadow: "0 2px 5px rgba(0,0,0,0.2)",
+          transition: "all 0.3s ease"
         }}
       >
-        {isSending ? 'Sending...' : 'Send Data'}
+        {isSending ? "Sending..." : "Send Message"}
       </button>
-      
-      {navigator.platform === "MacIntel" && (
+
+      {isMac.current && (
         <p style={{
-          marginTop: '20px',
-          color: '#666',
-          fontSize: '14px'
+          marginTop: "20px",
+          color: "#666",
+          fontSize: "14px"
         }}>
-          Note: On macOS, the app will stay open after sending.
+          On macOS: Click will show MainButton. Press it to send.
         </p>
       )}
     </div>
