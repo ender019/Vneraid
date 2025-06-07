@@ -5,18 +5,23 @@ function App() {
   const [isButtonClicked, setIsButtonClicked] = useState(false);
 
   useEffect(() => {
-    const webApp = window.Telegram?.WebApp;
+    if (window.Telegram) {
+      const webApp = window.Telegram.WebApp;
 
-    if (webApp) {
-      webApp.ready(); // Ensure WebApp is ready
-      setTg(webApp);
-      webApp.expand(); // Prevent collapsing
+      if (webApp) {
+        webApp.ready();
+        setTg(webApp);
+        webApp.expand();  // Ensure WebApp doesn't collapse
 
-      console.log("Telegram WebApp is ready");
+        console.log("Telegram WebApp is ready");
+      } else {
+        console.log("Telegram WebApp is not available");
+      }
     } else {
-      console.log("Telegram WebApp is not available");
+      console.log("Telegram SDK is not loaded");
     }
   }, []);
+
 
   const sendToBot = () => {
   console.log("Button clicked!");
