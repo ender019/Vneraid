@@ -5,39 +5,39 @@ function App() {
   const [isButtonClicked, setIsButtonClicked] = useState(false);
 
   useEffect(() => {
-    if (window.Telegram) {
-      const webApp = window.Telegram.WebApp;
+    const webApp = window.Telegram?.WebApp;
 
-      if (webApp) {
-        webApp.ready();
-        setTg(webApp);
-        webApp.expand();  // Ensure WebApp doesn't collapse
+    if (webApp) {
+      webApp.ready(); // Ensure WebApp is ready
+      setTg(webApp);
+      webApp.expand(); // Prevent collapsing
 
-        console.log("Telegram WebApp is ready");
-      } else {
-        console.log("Telegram WebApp is not available");
-      }
+      console.log("Telegram WebApp is ready");
     } else {
-      console.log("Telegram SDK is not loaded");
+      console.log("Telegram WebApp is not available");
     }
   }, []);
 
-
   const sendToBot = () => {
-    console.log("Button clicked!");
+  console.log("Button clicked!");
 
-    if (tg) {
+  if (tg) {
+      // Indicate that button was clicked by changing the state
       setIsButtonClicked(true);
       tg.sendData("Hello from React Mini App!");
 
+      // Log data being sent for debugging
       console.log("Data sent to Telegram bot:", "Hello from React Mini App!");
 
-      // After sending data, manually close the WebApp if needed (optional)
-      tg.close();  // Optional: Can help in preventing unexpected closing behavior
-
-      // Ensure the WebApp remains expanded after sending data
+      // Keep app open by forcing Telegram to expand again
       tg.expand();
 
+      // Prevent the app from quitting unexpectedly (on Mac)
+      if (navigator.platform === "MacIntel") {
+        tg.close();
+      }
+
+      // Reset button click state after a short delay (for feedback)
       setTimeout(() => setIsButtonClicked(false), 500);
     } else {
       alert("Telegram WebApp not available");
@@ -45,10 +45,9 @@ function App() {
   };
 
 
-
   return (
     <div className="App" style={{ padding: 20 }}>
-      <h1>Hello, Telegram!</h1>
+      <h1>test!</h1>
       <button
         onClick={sendToBot}
         style={{
