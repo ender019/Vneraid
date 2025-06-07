@@ -1,0 +1,263 @@
+databaseChangeLog:
+    -   changeSet:
+            id: 1749315719887-1
+            author: kiril
+            objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+            changes:
+                -   createTable:
+                        columns:
+                            -   column:
+                                    autoIncrement: true
+                                    constraints:
+                                        nullable: false
+                                        primaryKey: true
+                                        primaryKeyName: pk_connection
+                                    name: id
+                                    type: BIGINT
+                            -   column:
+                                    constraints:
+                                        nullable: false
+                                    name: user_id
+                                    type: BIGINT
+                            -   column:
+                                    constraints:
+                                        nullable: false
+                                    name: session_id
+                                    type: BIGINT
+                            -   column:
+                                    name: role
+                                    type: VARCHAR(255)
+                        tableName: connection
+    -   changeSet:
+            id: 1749315719887-2
+            author: kiril
+            objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+            changes:
+                -   createTable:
+                        columns:
+                            -   column:
+                                    autoIncrement: true
+                                    constraints:
+                                        nullable: false
+                                        primaryKey: true
+                                        primaryKeyName: pk_session
+                                    name: id
+                                    type: BIGINT
+                            -   column:
+                                    name: session_name
+                                    type: VARCHAR(255)
+                            -   column:
+                                    name: group_name
+                                    type: VARCHAR(255)
+                            -   column:
+                                    name: group_id
+                                    type: VARCHAR(255)
+                            -   column:
+                                    name: created_at
+                                    type: DATETIME
+                            -   column:
+                                    name: img_possible
+                                    type: BOOLEAN
+                            -   column:
+                                    name: video_possible
+                                    type: BOOLEAN
+                            -   column:
+                                    name: audio_possible
+                                    type: BOOLEAN
+                            -   column:
+                                    name: link_possible
+                                    type: BOOLEAN
+                            -   column:
+                                    name: max_warn
+                                    type: INT
+                            -   column:
+                                    name: active
+                                    type: BOOLEAN
+                        tableName: session
+    -   changeSet:
+            id: 1749315719887-3
+            author: kiril
+            objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+            changes:
+                -   createTable:
+                        columns:
+                            -   column:
+                                    autoIncrement: true
+                                    constraints:
+                                        nullable: false
+                                        primaryKey: true
+                                        primaryKeyName: pk_submit
+                                    name: id
+                                    type: BIGINT
+                            -   column:
+                                    name: hash
+                                    type: VARCHAR(255)
+                            -   column:
+                                    name: deadline
+                                    type: DATETIME
+                            -   column:
+                                    name: user_id
+                                    type: BIGINT
+                        tableName: submit
+    -   changeSet:
+            id: 1749315719887-4
+            author: kiril
+            objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+            changes:
+                -   createTable:
+                        columns:
+                            -   column:
+                                    autoIncrement: true
+                                    constraints:
+                                        nullable: false
+                                        primaryKey: true
+                                        primaryKeyName: pk_user
+                                    name: id
+                                    type: BIGINT
+                            -   column:
+                                    name: username
+                                    type: VARCHAR(255)
+                            -   column:
+                                    constraints:
+                                        nullable: false
+                                    name: password
+                                    type: VARCHAR(255)
+                            -   column:
+                                    name: email
+                                    type: VARCHAR(255)
+                            -   column:
+                                    name: tg_id
+                                    type: VARCHAR(255)
+                            -   column:
+                                    name: created_at
+                                    type: DATETIME
+                        tableName: user
+    -   changeSet:
+            id: 1749315719887-5
+            author: kiril
+            objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+            changes:
+                -   createTable:
+                        columns:
+                            -   column:
+                                    autoIncrement: true
+                                    constraints:
+                                        nullable: false
+                                        primaryKey: true
+                                        primaryKeyName: pk_warnings
+                                    name: id
+                                    type: BIGINT
+                            -   column:
+                                    name: warns
+                                    type: INT
+                            -   column:
+                                    name: baned
+                                    type: BOOLEAN
+                            -   column:
+                                    name: user_id
+                                    type: BIGINT
+                            -   column:
+                                    name: session_id
+                                    type: BIGINT
+                        tableName: warnings
+    -   changeSet:
+            id: 1749315719887-6
+            author: kiril
+            objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+            changes:
+                -   addUniqueConstraint:
+                        columnNames: user_id, session_id
+                        constraintName: uc_16023342ccc75dc64597df3ad
+                        tableName: warnings
+    -   changeSet:
+            id: 1749315719887-7
+            author: kiril
+            objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+            changes:
+                -   addUniqueConstraint:
+                        columnNames: user_id, session_id
+                        constraintName: uc_7352714659536f2fb1f28f7c5
+                        tableName: connection
+    -   changeSet:
+            id: 1749315719887-8
+            author: kiril
+            objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+            changes:
+                -   addUniqueConstraint:
+                        columnNames: group_id
+                        constraintName: uc_session_group
+                        tableName: session
+    -   changeSet:
+            id: 1749315719887-9
+            author: kiril
+            objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+            changes:
+                -   addUniqueConstraint:
+                        columnNames: tg_id
+                        constraintName: uc_user_tg
+                        tableName: user
+    -   changeSet:
+            id: 1749315719887-10
+            author: kiril
+            objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+            changes:
+                -   addUniqueConstraint:
+                        columnNames: username
+                        constraintName: uc_user_username
+                        tableName: user
+    -   changeSet:
+            id: 1749315719887-11
+            author: kiril
+            objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+            changes:
+                -   addForeignKeyConstraint:
+                        baseColumnNames: session_id
+                        baseTableName: connection
+                        constraintName: FK_CONNECTION_ON_SESSION
+                        referencedColumnNames: id
+                        referencedTableName: session
+    -   changeSet:
+            id: 1749315719887-12
+            author: kiril
+            objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+            changes:
+                -   addForeignKeyConstraint:
+                        baseColumnNames: user_id
+                        baseTableName: connection
+                        constraintName: FK_CONNECTION_ON_USER
+                        referencedColumnNames: id
+                        referencedTableName: user
+    -   changeSet:
+            id: 1749315719887-13
+            author: kiril
+            objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+            changes:
+                -   addForeignKeyConstraint:
+                        baseColumnNames: user_id
+                        baseTableName: submit
+                        constraintName: FK_SUBMIT_ON_USER
+                        referencedColumnNames: id
+                        referencedTableName: user
+    -   changeSet:
+            id: 1749315719887-14
+            author: kiril
+            objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+            changes:
+                -   addForeignKeyConstraint:
+                        baseColumnNames: session_id
+                        baseTableName: warnings
+                        constraintName: FK_WARNINGS_ON_SESSION
+                        referencedColumnNames: id
+                        referencedTableName: session
+    -   changeSet:
+            id: 1749315719887-15
+            author: kiril
+            objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+            changes:
+                -   addForeignKeyConstraint:
+                        baseColumnNames: user_id
+                        baseTableName: warnings
+                        constraintName: FK_WARNINGS_ON_USER
+                        referencedColumnNames: id
+                        referencedTableName: user
+

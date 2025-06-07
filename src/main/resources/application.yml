@@ -1,0 +1,55 @@
+spring:
+    config:
+        import:
+            - optional:file:.env[.properties]
+    application:
+        name: TAntiSpamService
+    datasource:
+        url: jdbc:postgresql://${PSQL_HOST}:${PSQL_PORT}/${PSQL_BASENAME}
+        username: ${PSQL_USERNAME}
+        password: ${PSQL_PASSWORD}
+        driver-class-name: org.postgresql.Driver
+    jpa:
+        database: postgresql
+        database-platform: org.hibernate.dialect.PostgresPlusDialect
+        show-sql: true
+        hibernate:
+            ddl-auto: none
+    liquibase:
+        change-log: db/changelog/db.changelog-master.yaml
+        url: jdbc:postgresql://${PSQL_HOST}:${PSQL_PORT}/${PSQL_BASENAME}
+        user: ${PSQL_USERNAME}
+        password: ${PSQL_PASSWORD}
+        driver-class-name: org.postgresql.Driver
+        enabled: true
+
+
+server:
+    port: ${PORT}
+
+logging:
+    level:
+        org.springframework: INFO
+        com.unknown.user: DEBUG
+    file:
+        name: src/main/resources/logging/user-ms.log
+    logback:
+        rollingpolicy:
+            max-file-size: 10MB
+            max-history: 10
+
+springdoc:
+    swagger-ui:
+        enabled: true
+        path: /swagger.html
+
+
+services:
+    ai:
+        host: ${AI_HOST}
+    bot:
+        host: ${BOT_HOST}
+    app:
+        host: ${APP_HOST}
+    auth:
+        host: ${AUTH_HOST}
