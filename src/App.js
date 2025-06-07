@@ -11,11 +11,7 @@ function App() {
       setTg(webApp);
       webApp.expand();
       
-      // Critical fix for macOS
-      if (navigator.platform === "MacIntel") {
-        webApp.enableClosingConfirmation(); // Prevents automatic closing
-        console.log("macOS protections enabled");
-      }
+    
     }
   }, []);
 
