@@ -16,4 +16,15 @@ public class BotController {
         int res = botService.checkSpam(message.user_id(), message.group_id(), message.text());
         return res;
     }
+
+    //TODO: group_id -> group_name
+    @PostMapping("/session")
+    public void add_session(@RequestBody MessageDTO message) {
+        botService.addSession(message.user_id(), message.group_id(), message.group_id());
+    }
+
+    @PutMapping
+    public void vereficate(@RequestBody MessageDTO message) {
+        botService.vereficate(message.user_id());
+    }
 }
