@@ -19,7 +19,8 @@ function App() {
   }, []);
 
   const sendToBot = () => {
-    console.log("Button clicked!");
+  console.log("Button clicked!");
+
     if (tg) {
       // Indicate that button was clicked by changing the state
       setIsButtonClicked(true);
@@ -30,13 +31,19 @@ function App() {
 
       // Keep app open by forcing Telegram to expand again
       tg.expand();
-      
+
+      // Prevent the app from quitting unexpectedly (on Mac)
+      if (navigator.platform === "MacIntel") {
+        tg.close();
+      }
+
       // Reset button click state after a short delay (for feedback)
       setTimeout(() => setIsButtonClicked(false), 500);
     } else {
       alert("Telegram WebApp not available");
     }
   };
+
 
   return (
     <div className="App" style={{ padding: 20 }}>
