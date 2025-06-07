@@ -24,7 +24,7 @@ function App() {
 
 
   const sendToBot = () => {
-  console.log("Button clicked!");
+    console.log("Button clicked!");
 
     if (tg) {
       // Indicate that button was clicked by changing the state
@@ -34,13 +34,8 @@ function App() {
       // Log data being sent for debugging
       console.log("Data sent to Telegram bot:", "Hello from React Mini App!");
 
-      // Keep app open by forcing Telegram to expand again
+      // Ensure the WebApp remains expanded (some platforms collapse it automatically)
       tg.expand();
-
-      // Prevent the app from quitting unexpectedly (on Mac)
-      if (navigator.platform === "MacIntel") {
-        tg.close();
-      }
 
       // Reset button click state after a short delay (for feedback)
       setTimeout(() => setIsButtonClicked(false), 500);
