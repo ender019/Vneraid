@@ -56,7 +56,7 @@ function App() {
       maxWidth: '100%',
       boxSizing: 'border-box'
     }}>
-      <h1>Telegram WebApp Demo</h1>
+      <h1>Telegram WebApp Demoooo</h1>
       <button
         onClick={sendToBot}
         disabled={isSending}
