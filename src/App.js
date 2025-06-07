@@ -9,12 +9,16 @@ function App() {
     if (webApp) {
       webApp.ready(); // Inform Telegram the app is ready
       setTg(webApp);
+      webApp.expand(); // Ensure WebApp stays open
     }
   }, []);
 
   const sendToBot = () => {
     if (tg) {
+      // Use Telegram method correctly to prevent the app from collapsing
       tg.sendData("Hello from React Mini App!");
+      // Keep app open by forcing Telegram to expand, just in case
+      tg.expand();
     } else {
       alert("Telegram WebApp not available");
     }
