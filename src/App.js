@@ -2,23 +2,37 @@ import React, { useEffect, useState } from "react";
 
 function App() {
   const [tg, setTg] = useState(null);
+  const [isButtonClicked, setIsButtonClicked] = useState(false);
 
   useEffect(() => {
     const webApp = window.Telegram?.WebApp;
 
     if (webApp) {
-      webApp.ready(); // Inform Telegram the app is ready
+      webApp.ready(); // Ensure WebApp is ready
       setTg(webApp);
-      webApp.expand(); // Ensure WebApp stays open
+      webApp.expand(); // Prevent collapsing
+
+      console.log("Telegram WebApp is ready");
+    } else {
+      console.log("Telegram WebApp is not available");
     }
   }, []);
 
   const sendToBot = () => {
+    console.log("Button clicked!");
     if (tg) {
-      // Use Telegram method correctly to prevent the app from collapsing
+      // Indicate that button was clicked by changing the state
+      setIsButtonClicked(true);
       tg.sendData("Hello from React Mini App!");
-      // Keep app open by forcing Telegram to expand, just in case
+
+      // Log data being sent for debugging
+      console.log("Data sent to Telegram bot:", "Hello from React Mini App!");
+
+      // Keep app open by forcing Telegram to expand again
       tg.expand();
+      
+      // Reset button click state after a short delay (for feedback)
+      setTimeout(() => setIsButtonClicked(false), 500);
     } else {
       alert("Telegram WebApp not available");
     }
@@ -26,8 +40,20 @@ function App() {
 
   return (
     <div className="App" style={{ padding: 20 }}>
-      <h1>test</h1>
-      <button onClick={sendToBot}>Send Message to Bot</button>
+      <h1>Hello, Telegram!</h1>
+      <button
+        onClick={sendToBot}
+        style={{
+          backgroundColor: isButtonClicked ? "green" : "blue", // Feedback: Change color on click
+          color: "white",
+          padding: "10px 20px",
+          border: "none",
+          borderRadius: "5px",
+          cursor: "pointer",
+        }}
+      >
+        {isButtonClicked ? "Sending..." : "Send Message to Bot"}
+      </button>
     </div>
   );
 }
