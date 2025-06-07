@@ -26,7 +26,7 @@ function App() {
 
   return (
     <div className="App" style={{ padding: 20 }}>
-      <h1>Hello, Telegram!</h1>
+      <h1>test</h1>
       <button onClick={sendToBot}>Send Message to Bot</button>
     </div>
   );
