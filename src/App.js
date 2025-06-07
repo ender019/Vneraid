@@ -27,22 +27,23 @@ function App() {
     console.log("Button clicked!");
 
     if (tg) {
-      // Indicate that button was clicked by changing the state
       setIsButtonClicked(true);
       tg.sendData("Hello from React Mini App!");
 
-      // Log data being sent for debugging
       console.log("Data sent to Telegram bot:", "Hello from React Mini App!");
 
-      // Ensure the WebApp remains expanded (some platforms collapse it automatically)
+      // After sending data, manually close the WebApp if needed (optional)
+      tg.close();  // Optional: Can help in preventing unexpected closing behavior
+
+      // Ensure the WebApp remains expanded after sending data
       tg.expand();
 
-      // Reset button click state after a short delay (for feedback)
       setTimeout(() => setIsButtonClicked(false), 500);
     } else {
       alert("Telegram WebApp not available");
     }
   };
+
 
 
   return (
