@@ -12,4 +12,4 @@ class Config:
         load_dotenv()
 
         self.TOKEN = os.getenv('BOT_TOKEN')
-        self.TOKEN = os.getenv('PORT')
+        self.PORT = os.getenv('PORT')
