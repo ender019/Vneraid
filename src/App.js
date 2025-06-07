@@ -2,65 +2,68 @@ import React, { useEffect, useState } from "react";
 
 function App() {
   const [tg, setTg] = useState(null);
-  const [isButtonClicked, setIsButtonClicked] = useState(false);
+  const [isSending, setIsSending] = useState(false);
 
   useEffect(() => {
     const webApp = window.Telegram?.WebApp;
 
     if (webApp) {
-      webApp.ready(); // Ensure WebApp is ready
+      webApp.ready();
       setTg(webApp);
-      webApp.expand(); // Prevent collapsing
-
-      console.log("Telegram WebApp is ready");
-    } else {
-      console.log("Telegram WebApp is not available");
+      webApp.expand(); // Expand once on init
+      
+      // Handle platform-specific behaviors
+      if (navigator.platform === "MacIntel") {
+        console.log("Running on macOS - applying workarounds");
+        // Additional macOS-specific initialization if needed
+      }
     }
   }, []);
 
   const sendToBot = () => {
-  console.log("Button clicked!");
-
-  if (tg) {
-      // Indicate that button was clicked by changing the state
-      setIsButtonClicked(true);
-      tg.sendData("Hello from React Mini App!");
-
-      // Log data being sent for debugging
-      console.log("Data sent to Telegram bot:", "Hello from React Mini App!");
-
-      // Keep app open by forcing Telegram to expand again
-      tg.expand();
-
-      // Prevent the app from quitting unexpectedly (on Mac)
-      if (navigator.platform === "MacIntel") {
-        tg.close();
-      }
-
-      // Reset button click state after a short delay (for feedback)
-      setTimeout(() => setIsButtonClicked(false), 500);
-    } else {
+    if (!tg) {
       alert("Telegram WebApp not available");
+      return;
     }
-  };
 
+    console.log("Sending data to bot");
+    setIsSending(true);
+    
+    // Send data to bot
+    tg.sendData("Hello from React Mini App!");
+    
+    // On macOS, don't close immediately - let user see feedback
+    setTimeout(() => {
+      setIsSending(false);
+      // Only close if you really want to
+      // tg.close(); // Remove this line to prevent closing
+    }, 1000);
+  };
 
   return (
     <div className="App" style={{ padding: 20 }}>
-      <h1>test!</h1>
+      <h1>Telegram Mini App Test</h1>
       <button
         onClick={sendToBot}
+        disabled={isSending}
         style={{
-          backgroundColor: isButtonClicked ? "green" : "blue", // Feedback: Change color on click
+          backgroundColor: isSending ? "green" : "#0088cc",
           color: "white",
           padding: "10px 20px",
           border: "none",
           borderRadius: "5px",
           cursor: "pointer",
+          opacity: isSending ? 0.8 : 1,
         }}
       >
-        {isButtonClicked ? "Sending..." : "Send Message to Bot"}
+        {isSending ? "Sending..." : "Send Message to Bot"}
       </button>
+      
+      {navigator.platform === "MacIntel" && (
+        <p style={{ color: "#666", fontSize: "0.8rem", marginTop: "10px" }}>
+          macOS user detected - special handling applied
+        </p>
+      )}
     </div>
   );
 }
