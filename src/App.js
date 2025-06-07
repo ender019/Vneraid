@@ -1,86 +1,27 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 
-function App() {
-  const [tg, setTg] = useState(null);
-  const [isSending, setIsSending] = useState(false);
+import Home from './pages/home';
+import SessionSettings from './pages/sessionSettings';
 
-  useEffect(() => {
-    const webApp = window.Telegram?.WebApp;
-    if (webApp) {
-      webApp.ready();
-      setTg(webApp);
-      webApp.expand();
-      
-    
-    }
-  }, []);
+import Header from './components/heaeder';
 
-  const sendToBot = async () => {
-    if (!tg) return;
-    
-    setIsSending(true);
-    
-    try {
-      // Main difference: Use MainButton on macOS instead of immediate sendData
-      if (navigator.platform === "MacIntel") {
-        tg.MainButton.setText("Processing...").show();
-        await new Promise(resolve => setTimeout(resolve, 300)); // Small delay
-        
-        tg.sendData(JSON.stringify({ command: "hello" }));
-        
-        // Keep WebApp open for 1.5s so user sees feedback
-        setTimeout(() => {
-          tg.MainButton.hide();
-          setIsSending(false);
-        }, 1500);
-      } else {
-        // Normal mobile behavior
-        tg.sendData(JSON.stringify({ command: "hello" }));
-        setIsSending(false);
-      }
-    } catch (error) {
-      console.error("Send error:", error);
-      setIsSending(false);
-      tg.MainButton.hide();
-    }
-  };
+
+import './static/main.css';
+
+const App = () => {
 
   return (
-    <div style={{
-      padding: 20,
-      fontFamily: 'system-ui',
-      maxWidth: '100%',
-      boxSizing: 'border-box'
-    }}>
-      <h1>Telegram WebApp Demoooo</h1>
-      <button
-        onClick={sendToBot}
-        disabled={isSending}
-        style={{
-          background: isSending ? '#5cb85c' : '#0088cc',
-          color: 'white',
-          padding: '12px 24px',
-          border: 'none',
-          borderRadius: '8px',
-          fontSize: '16px',
-          cursor: 'pointer',
-          transition: 'all 0.3s'
-        }}
-      >
-        {isSending ? 'Sending...' : 'Send Data'}
-      </button>
-      
-      {navigator.platform === "MacIntel" && (
-        <p style={{
-          marginTop: '20px',
-          color: '#666',
-          fontSize: '14px'
-        }}>
-          Note: On macOS, the app will stay open after sending.
-        </p>
-      )}
-    </div>
+    <Router>
+        <Header/>
+        <div className="main">
+          <Routes>
+            <Route exact path="/" element={<Home />} />
+            <Route path="/session/:hash" element={<SessionSettings />} />
+          </Routes>
+        </div>
+    </Router>
   );
-}
+};
 
 export default App;

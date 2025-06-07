@@ -1,16 +1,34 @@
 import React, { useState } from 'react';
 
-
 import List from '../components/list';
-import bottom from '../components/bottom';
+
+import '../static/profile.css';
+
+
 
 const Home = () => {
     return(
         <>
-            <div className='profile_info'>
-                hello
+            <div className="profile-info">
+                <div className="profile-header">
+                    <h2 className="username"> Mike </h2>
+                    <p className="email"> mamikulin@gmail.com </p>
+                </div>
+                
+                <div className="session-stats">
+                    <div className="stat-card">
+                        <span className="stat-number"> 10 </span>
+                        <span className="stat-label">Sessions Created</span>
+                    </div>
+                    <div className="stat-card">
+                        <span className="stat-number"> 15 </span>
+                        <span className="stat-label">Sessions Granted</span>
+                    </div>
+                </div>
             </div>
-            {/* <list /> */}
+
+            <List isOwned={ true } />
+            <List isOwned={ false } />
         </>
     );
 };
