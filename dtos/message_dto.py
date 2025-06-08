@@ -5,7 +5,6 @@ class Message:
     group_id: str
     user_id: str
     text: str
-    has_img: bool
-    has_video: bool
-    has_audio: bool
-    has_link: bool
+    hidden_url_count: int  # Новое поле: количество скрытых ссылок
+    media_attachment: bool  # Объединенное поле для медиа
+    sticker_or_gif_present: bool  # Новое поле: наличие стикеров/GIF

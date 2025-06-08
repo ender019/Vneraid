@@ -1,3 +1,4 @@
+#handlers/base_handlers
 import asyncio
 import logging
 from aiogram import types, F, Router
@@ -13,20 +14,24 @@ async def handle_all_messages(message: types.Message):
     try:
         print(f"\n⚡ Получено сообщение: {message.text if message.text else message}")
 
-        # Парсим сообщение в DTO напрямую из Message
+        # Парсинг сообщения в DTO
         try:
-            message_dto = parse_message_to_dto(message)  # Используем новую функцию
+            message_dto = parse_message_to_dto(message)
             print(f"✅ Успешно распарсено в DTO: {message_dto}")
         except Exception as e:
             print(f"❌ Ошибка парсинга: {str(e)}")
             logging.error(f"Parsing error: {str(e)}")
             return
 
-        asyncio.create_task(send_message_to_service(message_dto))
-        print(f"🚀 Задача отправки DTO создана")
+        # Отправка на сервис и обработка результата
+        spam_flag = await send_message_to_service(message_dto, message)
+
+        # Если спам - прекращаем обработку
+        if spam_flag == 2:
+            return True  # Прерываем цепочку обработчиков
 
     except Exception as e:
-        print(f"🔥 Критическая ошибка в handle_all_messages: {str(e)}")
+        print(f"🔥 Критическая ошибка: {str(e)}")
         logging.exception(f"Error in handle_all_messages: {e}")
 
 
