@@ -13,7 +13,7 @@ import java.util.Set;
 
 @Data
 @Entity
-@Table(name = "session")
+@Table(name = "sessions")
 @NoArgsConstructor
 public class Session {
     @Id
@@ -32,19 +32,19 @@ public class Session {
     @Column
     private LocalDateTime created_at;
 
-    @Column
+    @Column(name = "img_possible")
     private Boolean imgPossible;
 
-    @Column
+    @Column(name = "video_possible")
     private Boolean videoPossible;
 
-    @Column
+    @Column(name = "audio_possible")
     private Boolean audioPossible;
 
-    @Column
+    @Column(name = "link_possible")
     private Boolean linkPossible;
 
-    @Column
+    @Column(name = "max_warn")
     private Integer maxWarn;
 
     @Column
