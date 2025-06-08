@@ -1,5 +1,6 @@
 package com.vneraid.botservice.advices;
 
+import io.swagger.v3.oas.annotations.Hidden;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,10 +11,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.dao.DataIntegrityViolationException;
 
+import javax.management.RuntimeErrorException;
 import java.util.ArrayList;
 import java.util.NoSuchElementException;
 
 @Slf4j
+@Hidden
 @ControllerAdvice
 public class ErrorHandlingControllerAdvice {
     @ResponseBody
@@ -44,5 +47,14 @@ public class ErrorHandlingControllerAdvice {
         e.getBindingResult().getFieldErrors().forEach(er -> errors.add(er.getField()));
         log.warn("constraintViolationException in method {} with results:\n{}", e.getParameter(), errors);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
+    }
+
+    @ResponseBody
+    @ExceptionHandler(RuntimeErrorException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<String> handleRuntimeErrorException(RuntimeErrorException e)
+    {
+        log.warn("constraintRuntimeErrorException with results:\n{}", e.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
     }
 }
