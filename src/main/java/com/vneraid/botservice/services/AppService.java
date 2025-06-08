@@ -1,5 +1,6 @@
 package com.vneraid.botservice.services;
 
+import com.vneraid.botservice.dtos.SendSessionDTO;
 import com.vneraid.botservice.dtos.SessionDTO;
 import com.vneraid.botservice.dtos.SettingsDTO;
 import com.vneraid.botservice.dtos.UserDTO;
@@ -44,12 +45,15 @@ public class AppService {
     }
 
     public SessionDTO getSession(Long id) {
-        var res = connectionRepository.findConnectionByUserId(id);
-        return new SessionDTO(
-                res.stream().filter(el -> el.getRole().equals("writer"))
-                        .map(el -> el.getUser().getUsername()).toList(),
-                res.stream().filter(el -> el.getRole().equals("reader"))
-                        .map(el -> el.getUser().getUsername()).toList());
+        var admins = sessionRepository.findRoleSessionByUserId(id, "admin");
+        var members = sessionRepository.findRoleSessionByUserId(id, "member");
+        var out1 = admins.stream().map(el -> new SendSessionDTO(el.getId(), el.getSession_name(), el.getImgPossible(),
+                el.getVideoPossible(), el.getAudioPossible(), el.getLinkPossible(), el.getMaxWarn(),
+                el.getActive())).toList();
+        var out2 = members.stream().map(el -> new SendSessionDTO(el.getId(), el.getSession_name(), el.getImgPossible(),
+                el.getVideoPossible(), el.getAudioPossible(), el.getLinkPossible(), el.getMaxWarn(),
+                el.getActive())).toList();
+        return new SessionDTO(out1, out2);
     }
 
     public UserDTO getUser(Long id) {
@@ -62,4 +66,6 @@ public class AppService {
         var user = userRepository.findUserById(session_id).orElseThrow();
         connectionRepository.save(new Connection(user, ses, "admin"));
     }
+
+
 }

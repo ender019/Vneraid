@@ -10,7 +10,7 @@ import lombok.RequiredArgsConstructor;
 
 @Data
 @Entity
-@Table(name = "connection", uniqueConstraints = {
+@Table(name = "connections", uniqueConstraints = {
         @UniqueConstraint(columnNames = {"user_id", "session_id"})
 })
 @NoArgsConstructor
