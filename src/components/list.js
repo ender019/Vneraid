@@ -7,6 +7,8 @@ import '../static/list.css';
 
 const List = ({ isOwned, sessions = []  }) => {
 
+  console.log(sessions);
+
   // const [sessions, setssions] = useState(null);
 
   // useEffect(() => {
@@ -50,10 +52,10 @@ const List = ({ isOwned, sessions = []  }) => {
             <Link to={`/session/${session.id}`} key={session.id} className="session-card">
                 <div className="session-info">
                 <h3 className="session-name">{session.name}</h3>
-                <p className="session-description">Название чата: {session.group_name}</p>
+                <p className="session-description">Название чата: {session.group}</p>
                 </div>
-                <div className={`session-status ${session.status}`}>
-                {session.status === 'active' ? 'Active' : 'Inactive'}
+                <div className={`session-status ${session.active ? 'active' : 'inactive'}`}>
+                {session.active ? 'active' : 'inactive'}
                 </div>
             </Link>
             ))}

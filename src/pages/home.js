@@ -5,7 +5,7 @@ import '../static/profile.css';
 
 const Home = () => {
     localStorage.setItem('authToken', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlhdCI6MTUxNjIzOTAyMn0.KMUFsIDTnFmyG3nMiGM6H9FNFUROf3wh7SmqJp-QV30');
-    
+
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [isCopied, setIsCopied] = useState(false);
@@ -21,22 +21,24 @@ const Home = () => {
                 
                 const userId = 2; 
                 
-                const userResponse = await fetch(`http://192.168.52.48:9002/app/users/${userId}`);
+                const url = `http://192.168.2.56:9002/app/user/${userId}`;
+                console.log(url);
+                const userResponse = await fetch(url);
                 if (!userResponse.ok) throw new Error('Failed to fetch user data');
                 const userData = await userResponse.json();
                 setUserData(userData);
 
                 console.log(userData);
                 
-                const sessionsResponse = await fetch(`http://192.168.52.48:9002/app/users/${userId}/sessions`);
-                if (!sessionsResponse.ok) throw new Error('Failed to fetch sessions data');
+                const sessionsResponse = await fetch(`http://192.168.2.56:9002/app/user/${userId}/sessions`);
+                if (!sessionsResponse.ok) throw new Error('Failed to fetch session data');
                 const sessionsData = await sessionsResponse.json();
                 
                 setSessionsData({
                     ownedSessions: sessionsData.redSessions || [],
                     grantedSessions: sessionsData.lisSessions || []
                 });
-                
+                console.log(sessionsData);
                 setLoading(false);
             } catch (err) {
                 setError(err.message);

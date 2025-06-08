@@ -10,8 +10,8 @@ const SessionSettings = () => {
     const [error, setError] = useState(null);
     const [isChanged, setIsChanged] = useState(false);
     const [newCollaborator, setNewCollaborator] = useState('');
+    const [collaborators, setCollaborators] = useState([]);
     
-    // Initialize settings with proper structure based on API response
     const [settings, setSettings] = useState({
         name: '',
         active: true,
@@ -25,33 +25,38 @@ const SessionSettings = () => {
     useEffect(() => {
         const fetchSessionData = async () => {
             try {
-                const response = await fetch(`http://192.168.52.48:9002/app/sessions/${id}`);
-                if (!response.ok) throw new Error('Failed to fetch session data');
-                
-                const data = await response.json();
-                console.log("API Response:", data);
-                
-                // Set session data for display
+                const sessionResponse = await fetch(`http://192.168.2.56:9002/app/session/${id}`);
+                if (!sessionResponse.ok) throw new Error('Failed to fetch session data');
+                const sessionData = await sessionResponse.json();
+
+                console.log(sessionData)
+
+                const collaboratorsResponse = await fetch(`http://192.168.2.56:9002/app/session/${id}/collaborators`);
+                const collaboratorsData = collaboratorsResponse.ok 
+                    ? await collaboratorsResponse.json() 
+                    : [];
+
                 setSessionData({
                     id: id,
-                    name: data.name,
-                    active: data.active,
-                    createdAt: new Date().toISOString(), // API doesn't provide this, using current date as fallback
-                    messageCount: 0, // API doesn't provide this
-                    userCount: 0 // API doesn't provide this
+                    name: sessionData.name,
+                    group: sessionData.group,
+                    active: sessionData.active,
+                    createdAt: sessionData.createdAt || new Date().toISOString(),
+                    messageCount: sessionData.messageCount || 0,
+                    userCount: sessionData.userCount || 0
                 });
 
-                // Set settings from API response
                 setSettings({
-                    name: data.name || '',
-                    active: data.active || true,
-                    imgPossible: data.imgPossible || true,
-                    videoPossible: data.videoPossible || true,
-                    audioPossible: data.audioPossible || true,
-                    linkPossible: data.linkPossible || true,
-                    maxWarn: data.maxWarn || -1
+                    name: sessionData.name || '',
+                    active: sessionData.active || true,
+                    imgPossible: sessionData.imgPossible || true,
+                    videoPossible: sessionData.videoPossible || true,
+                    audioPossible: sessionData.audioPossible || true,
+                    linkPossible: sessionData.linkPossible || true,
+                    maxWarn: sessionData.maxWarn || -1
                 });
-                
+
+                setCollaborators(collaboratorsData);
                 setLoading(false);
             } catch (err) {
                 setError(err.message);
@@ -74,17 +79,19 @@ const SessionSettings = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await fetch(`http://192.168.52.48:9002/app/session/${id}/settings`, {
-                method: 'PATCH',
+            const response = await fetch(`http://192.168.2.56:9002/app/session/${id}/settings`, {
+                method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify(settings)
             });
 
-            if (!response.ok) throw new Error('Failed to update settings');
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'Failed to update settings');
+            }
 
-            // Update the session data with new values
             setSessionData(prev => ({
                 ...prev,
                 name: settings.name,
@@ -92,6 +99,64 @@ const SessionSettings = () => {
             }));
 
             setIsChanged(false);
+            setError(null);
+        } catch (err) {
+            setError(err.message);
+        }
+    };
+
+    const handleAddCollaborator = async (e) => {
+        e.preventDefault();
+        if (!newCollaborator.trim()) return;
+
+        try {
+            const response = await fetch(`http://192.168.2.56:9002/app/session/${id}/add`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ userId: newCollaborator.trim() })
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'Failed to add collaborator');
+            }
+
+            // Refresh collaborators list
+            const collaboratorsResponse = await fetch(`http://192.168.2.56:9002/app/session/${id}/collaborators`);
+            if (collaboratorsResponse.ok) {
+                setCollaborators(await collaboratorsResponse.json());
+            }
+
+            setNewCollaborator('');
+            setError(null);
+        } catch (err) {
+            setError(err.message);
+        }
+    };
+
+    const handleRemoveCollaborator = async (userId) => {
+        try {
+            const response = await fetch(`http://192.168.2.56:9002/app/session/${id}/remove`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ userId })
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'Failed to remove collaborator');
+            }
+
+            // Refresh collaborators list
+            const collaboratorsResponse = await fetch(`http://192.168.2.56:9002/app/session/${id}/collaborators`);
+            if (collaboratorsResponse.ok) {
+                setCollaborators(await collaboratorsResponse.json());
+            }
+
             setError(null);
         } catch (err) {
             setError(err.message);
@@ -128,6 +193,12 @@ const SessionSettings = () => {
                 >
                     Настройки
                 </button>
+                <button 
+                    className={`tab-button ${activeTab === 'collaborators' ? 'active' : ''}`}
+                    onClick={() => setActiveTab('collaborators')}
+                >
+                    Сотрудники
+                </button>
             </nav>
 
             <div className="session-content">
@@ -138,6 +209,10 @@ const SessionSettings = () => {
                             <div className="info-row">
                                 <span className="info-label">Название Сессии:</span>
                                 <span className="info-value">{sessionData.name}</span>
+                            </div>
+                            <div className="info-row">
+                                <span className="info-label">Название Чата:</span>
+                                <span className="info-value">{sessionData.group}</span>
                             </div>
                             <div className="info-row">
                                 <span className="info-label">Статус:</span>
@@ -264,6 +339,45 @@ const SessionSettings = () => {
                             </button>
                             {error && <div className="error-message">{error}</div>}
                         </form>
+                    </div>
+                )}
+
+                {activeTab === 'collaborators' && (
+                    <div className="session-collaborators-section">
+                        <h2>Управление сотрудниками</h2>
+                        <div className="collaborators-list">
+                            <h3>Текущие сотрудники</h3>
+                            {collaborators.length > 0 ? (
+                                <ul>
+                                    {collaborators.map(collaborator => (
+                                        <li key={collaborator.id}>
+                                            <span>{collaborator.name || collaborator.id}</span>
+                                            <button 
+                                                onClick={() => handleRemoveCollaborator(collaborator.id)}
+                                                className="remove-button"
+                                            >
+                                                Удалить
+                                            </button>
+                                        </li>
+                                    ))}
+                                </ul>
+                            ) : (
+                                <p>Нет сотрудников</p>
+                            )}
+                        </div>
+                        <div className="add-collaborator-form">
+                            <h3>Добавить сотрудника</h3>
+                            <form onSubmit={handleAddCollaborator}>
+                                <input
+                                    type="text"
+                                    value={newCollaborator}
+                                    onChange={(e) => setNewCollaborator(e.target.value)}
+                                    placeholder="Введите ID пользователя"
+                                />
+                                <button type="submit">Добавить</button>
+                            </form>
+                        </div>
+                        {error && <div className="error-message">{error}</div>}
                     </div>
                 )}
             </div>
