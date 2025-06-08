@@ -1,9 +1,6 @@
 package com.vneraid.botservice.services;
 
-import com.vneraid.botservice.dtos.SendSessionDTO;
-import com.vneraid.botservice.dtos.SessionDTO;
-import com.vneraid.botservice.dtos.SettingsDTO;
-import com.vneraid.botservice.dtos.UserDTO;
+import com.vneraid.botservice.dtos.*;
 import com.vneraid.botservice.entities.Connection;
 import com.vneraid.botservice.entities.Session;
 import com.vneraid.botservice.repository.ConnectionRepository;
@@ -14,6 +11,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import java.util.List;
 import java.util.NoSuchElementException;
 
 @Service
@@ -68,4 +66,9 @@ public class AppService {
     }
 
 
+    public List<CollabaratorsDTO> getCollaborators(Long id) {
+        var res = connectionRepository.findConnectionByUserId(id);
+        return res.stream().map(el -> new CollabaratorsDTO(el.getId(), el.getUser().getUsername(), el.getRole()))
+                .toList();
+    }
 }

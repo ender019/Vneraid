@@ -1,14 +1,15 @@
 package com.vneraid.botservice.controllers;
 
-import com.vneraid.botservice.dtos.AddUserDTO;
-import com.vneraid.botservice.dtos.SessionDTO;
-import com.vneraid.botservice.dtos.SettingsDTO;
-import com.vneraid.botservice.dtos.UserDTO;
+import com.vneraid.botservice.dtos.*;
 import com.vneraid.botservice.repository.UserRepository;
 import com.vneraid.botservice.services.AppService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -38,7 +39,14 @@ public class AppController {
         return appService.getSettings(id);
     }
 
-    @PatchMapping("/session/{id}/settings")
+    @GetMapping("/app/session/{id}/collaborators")
+    public List<CollabaratorsDTO> getCollaborators(@PathVariable Long id) {
+        log.info("App Get Collaborators Endpoint");
+        log.debug("Collaborator Id: {}", id);
+        return appService.getCollaborators(id);
+    }
+
+    @PutMapping("/session/{id}/settings")
     public String setSessionSettings(@PathVariable Long id, @RequestBody SettingsDTO settings) {
         appService.setSettings(id, settings);
         return "Success";
@@ -50,5 +58,13 @@ public class AppController {
         var user = userRepository.getUsersByUsername(new_user.username()).orElseThrow();
         appService.addSession(user.getId(), id, new_user.role());
         return "Success";
+    }
+
+    @DeleteMapping("/app/session/{id}/remove")
+    public Map<String, String> removeSession(@PathVariable Long id) {
+        log.info("Removing session: " + id);
+        var user = userRepository.findUserById(id).orElseThrow();
+        userRepository.deleteUserById(id);
+        return Map.of("username", user.getUsername());
     }
 }

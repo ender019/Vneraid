@@ -41,6 +41,7 @@ public class BotService {
     }
 
     public int checkSpam(CheckDTO message) {
+        log.info("Checking spam");
         int res;
         var request = new AiDTO(message.text(), message.hiddenUrlCount(),
                 message.mediaAttachment(), message.stickerOrGifPresent());
@@ -53,6 +54,7 @@ public class BotService {
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
         }
+        log.info("Response is: " + res);
         if (res == 1) {
             var user = warningRepository.findByUser_id(Long.valueOf(message.user_id())).orElse(new Warning());
             var ses = sessionRepository.findSessionByGroup_id(message.group_id()).orElseThrow();
@@ -66,6 +68,7 @@ public class BotService {
             user.setWarns(ses.getMaxWarn() + 1);
             warningRepository.save(user);
         }
+        log.info("Verdict is: " + res);
         return res;
     }
 
