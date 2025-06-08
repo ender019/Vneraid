@@ -1,6 +1,6 @@
 databaseChangeLog:
     -   changeSet:
-            id: 1749315719887-1
+            id: 1749371621139-1
             author: kiril
             objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
             changes:
@@ -11,7 +11,7 @@ databaseChangeLog:
                                     constraints:
                                         nullable: false
                                         primaryKey: true
-                                        primaryKeyName: pk_connection
+                                        primaryKeyName: pk_connections
                                     name: id
                                     type: BIGINT
                             -   column:
@@ -27,9 +27,9 @@ databaseChangeLog:
                             -   column:
                                     name: role
                                     type: VARCHAR(255)
-                        tableName: connection
+                        tableName: connections
     -   changeSet:
-            id: 1749315719887-2
+            id: 1749371621139-2
             author: kiril
             objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
             changes:
@@ -40,7 +40,7 @@ databaseChangeLog:
                                     constraints:
                                         nullable: false
                                         primaryKey: true
-                                        primaryKeyName: pk_session
+                                        primaryKeyName: pk_sessions
                                     name: id
                                     type: BIGINT
                             -   column:
@@ -73,9 +73,9 @@ databaseChangeLog:
                             -   column:
                                     name: active
                                     type: BOOLEAN
-                        tableName: session
+                        tableName: sessions
     -   changeSet:
-            id: 1749315719887-3
+            id: 1749371621139-3
             author: kiril
             objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
             changes:
@@ -86,21 +86,25 @@ databaseChangeLog:
                                     constraints:
                                         nullable: false
                                         primaryKey: true
-                                        primaryKeyName: pk_submit
+                                        primaryKeyName: pk_submits
                                     name: id
                                     type: BIGINT
                             -   column:
+                                    constraints:
+                                        nullable: false
                                     name: hash
                                     type: VARCHAR(255)
                             -   column:
+                                    constraints:
+                                        nullable: false
                                     name: deadline
                                     type: DATETIME
                             -   column:
                                     name: user_id
                                     type: BIGINT
-                        tableName: submit
+                        tableName: submits
     -   changeSet:
-            id: 1749315719887-4
+            id: 1749371621139-4
             author: kiril
             objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
             changes:
@@ -111,7 +115,7 @@ databaseChangeLog:
                                     constraints:
                                         nullable: false
                                         primaryKey: true
-                                        primaryKeyName: pk_user
+                                        primaryKeyName: pk_users
                                     name: id
                                     type: BIGINT
                             -   column:
@@ -131,9 +135,9 @@ databaseChangeLog:
                             -   column:
                                     name: created_at
                                     type: DATETIME
-                        tableName: user
+                        tableName: users
     -   changeSet:
-            id: 1749315719887-5
+            id: 1749371621139-5
             author: kiril
             objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
             changes:
@@ -155,13 +159,13 @@ databaseChangeLog:
                                     type: BOOLEAN
                             -   column:
                                     name: user_id
-                                    type: BIGINT
+                                    type: VARCHAR(255)
                             -   column:
                                     name: session_id
                                     type: BIGINT
                         tableName: warnings
     -   changeSet:
-            id: 1749315719887-6
+            id: 1749371621139-6
             author: kiril
             objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
             changes:
@@ -170,76 +174,85 @@ databaseChangeLog:
                         constraintName: uc_16023342ccc75dc64597df3ad
                         tableName: warnings
     -   changeSet:
-            id: 1749315719887-7
+            id: 1749371621139-7
             author: kiril
             objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
             changes:
                 -   addUniqueConstraint:
                         columnNames: user_id, session_id
-                        constraintName: uc_7352714659536f2fb1f28f7c5
-                        tableName: connection
+                        constraintName: uc_2f80758092f570fb35611fba7
+                        tableName: connections
     -   changeSet:
-            id: 1749315719887-8
+            id: 1749371621139-8
             author: kiril
             objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
             changes:
                 -   addUniqueConstraint:
                         columnNames: group_id
-                        constraintName: uc_session_group
-                        tableName: session
+                        constraintName: uc_sessions_group
+                        tableName: sessions
     -   changeSet:
-            id: 1749315719887-9
+            id: 1749371621139-9
+            author: kiril
+            objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+            changes:
+                -   addUniqueConstraint:
+                        columnNames: hash
+                        constraintName: uc_submits_hash
+                        tableName: submits
+    -   changeSet:
+            id: 1749371621139-10
             author: kiril
             objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
             changes:
                 -   addUniqueConstraint:
                         columnNames: tg_id
-                        constraintName: uc_user_tg
-                        tableName: user
+                        constraintName: uc_users_tg
+                        tableName: users
     -   changeSet:
-            id: 1749315719887-10
+            id: 1749371621139-11
             author: kiril
             objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
             changes:
                 -   addUniqueConstraint:
                         columnNames: username
-                        constraintName: uc_user_username
-                        tableName: user
+                        constraintName: uc_users_username
+                        tableName: users
     -   changeSet:
-            id: 1749315719887-11
+            id: 1749371621139-12
             author: kiril
             objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
             changes:
                 -   addForeignKeyConstraint:
                         baseColumnNames: session_id
-                        baseTableName: connection
-                        constraintName: FK_CONNECTION_ON_SESSION
+                        baseTableName: connections
+                        constraintName: FK_CONNECTIONS_ON_SESSION
                         referencedColumnNames: id
-                        referencedTableName: session
+                        referencedTableName: sessions
     -   changeSet:
-            id: 1749315719887-12
+            id: 1749371621139-13
             author: kiril
             objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
             changes:
                 -   addForeignKeyConstraint:
                         baseColumnNames: user_id
-                        baseTableName: connection
-                        constraintName: FK_CONNECTION_ON_USER
+                        baseTableName: connections
+                        constraintName: FK_CONNECTIONS_ON_USER
                         referencedColumnNames: id
-                        referencedTableName: user
+                        referencedTableName: users
     -   changeSet:
-            id: 1749315719887-13
+            id: 1749371621139-14
             author: kiril
             objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
             changes:
                 -   addForeignKeyConstraint:
                         baseColumnNames: user_id
-                        baseTableName: submit
-                        constraintName: FK_SUBMIT_ON_USER
+                        baseTableName: submits
+                        constraintName: FK_SUBMITS_ON_USER
                         referencedColumnNames: id
-                        referencedTableName: user
+                        referencedTableName: users
     -   changeSet:
-            id: 1749315719887-14
+            id: 1749371621139-15
             author: kiril
             objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
             changes:
@@ -248,16 +261,5 @@ databaseChangeLog:
                         baseTableName: warnings
                         constraintName: FK_WARNINGS_ON_SESSION
                         referencedColumnNames: id
-                        referencedTableName: session
-    -   changeSet:
-            id: 1749315719887-15
-            author: kiril
-            objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
-            changes:
-                -   addForeignKeyConstraint:
-                        baseColumnNames: user_id
-                        baseTableName: warnings
-                        constraintName: FK_WARNINGS_ON_USER
-                        referencedColumnNames: id
-                        referencedTableName: user
+                        referencedTableName: sessions
 

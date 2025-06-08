@@ -30,7 +30,7 @@ server:
 logging:
     level:
         org.springframework: INFO
-        com.unknown.user: DEBUG
+        com.vneraid.botservice: DEBUG
     file:
         name: src/main/resources/logging/user-ms.log
     logback:
