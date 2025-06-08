@@ -6,9 +6,11 @@ import com.vneraid.botservice.dtos.SettingsDTO;
 import com.vneraid.botservice.dtos.UserDTO;
 import com.vneraid.botservice.repository.UserRepository;
 import com.vneraid.botservice.services.AppService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+@Slf4j
 @RestController
 @RequestMapping("/app")
 public class AppController {
@@ -19,11 +21,15 @@ public class AppController {
 
     @GetMapping("/users/{id}")
     public UserDTO getUser(@PathVariable Long id) {
+        log.info("App Get User Endpoint");
+        log.debug("User Id: {}", id);
         return appService.getUser(id);
     }
 
     @GetMapping("/users/{id}/sessions")
     public SessionDTO getSessions(@PathVariable Long id) {
+        log.info("App Get Session Endpoint");
+        log.debug("Session Id: {}", id);
         return appService.getSession(id);
     }
 
@@ -40,6 +46,7 @@ public class AppController {
 
     @PutMapping("/session/{id}/add")
     public String addSession(@PathVariable Long id, @RequestBody AddUserDTO new_user) {
+        log.info("Adding new user: " + new_user);
         var user = userRepository.getUsersByUsername(new_user.username()).orElseThrow();
         appService.addSession(user.getId(), id, new_user.role());
         return "Success";
