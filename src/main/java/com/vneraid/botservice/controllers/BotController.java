@@ -2,6 +2,8 @@ package com.vneraid.botservice.controllers;
 
 import com.vneraid.botservice.dtos.AddSessionDTO;
 import com.vneraid.botservice.dtos.CheckDTO;
+import com.vneraid.botservice.dtos.VerificateDTO;
+import com.vneraid.botservice.services.AuthService;
 import com.vneraid.botservice.services.BotService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +15,8 @@ import org.springframework.web.bind.annotation.*;
 public class BotController {
     @Autowired
     private BotService botService;
+    @Autowired
+    private AuthService authService;
 
     @PostMapping("/check")
     public Integer check(@RequestBody CheckDTO message) {
@@ -37,9 +41,9 @@ public class BotController {
     }
 
     @PutMapping("/vereficate")
-    public void vereficate(@RequestBody String tg_id) {
+    public Boolean vereficate(@RequestBody VerificateDTO data) {
         log.info("Bot Vereficate Endpoint");
-        log.debug("User id: {}", tg_id);
-        botService.vereficate(tg_id);
+        log.debug("User id: {}", data);
+        return authService.vereficate(data.hash(), data.tg_id());
     }
 }

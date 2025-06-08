@@ -58,30 +58,24 @@ public class BotService {
             throw new RuntimeException(e.getMessage());
         }
         log.info("Response is: " + res);
-        if (res == 1) {
-            var user = warningRepository.findByUser_id(Long.valueOf(message.user_id())).orElse(new Warning());
-            var ses = sessionRepository.findSessionByGroup_id(message.group_id()).orElseThrow(
-                    () -> new NoSuchElementException("Session not found")
-            );
-            user.setUser_id(message.user_id());
-            user.setSession(ses);
-            user.setWarns(1);
-            if(user.getBaned()) return 2;
-            if (user.getWarns() + 1 == ses.getMaxWarn()) {
-                res = 2;
-                user.setBaned(true);
-            }
-            user.setWarns(ses.getMaxWarn() + 1);
-            warningRepository.save(user);
-        }
+//        if (res == 1) {
+//            var user = warningRepository.findByUser_id(Long.valueOf(message.user_id())).orElse(new Warning());
+//            var ses = sessionRepository.findSessionByGroup_id(message.group_id()).orElseThrow(
+//                    () -> new NoSuchElementException("Session not found")
+//            );
+//            user.setUser_id(message.user_id());
+//            user.setSession(ses);
+//            user.setWarns(1);
+//            if(user.getBaned()) return 2;
+//            if (user.getWarns() + 1 == ses.getMaxWarn()) {
+//                res = 2;
+//                user.setBaned(true);
+//            }
+//            user.setWarns(ses.getMaxWarn() + 1);
+//            warningRepository.save(user);
+//        }
         log.info("Verdict is: " + res);
         return res;
-    }
-
-    public void vereficate(String tg_id) {
-        var user = userRepository.findUserById(1L).orElseThrow(() -> new RuntimeException("Hash lost"));
-        user.setTg_id(tg_id);
-        userRepository.save(user);
     }
 
     @Transactional

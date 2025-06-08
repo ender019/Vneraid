@@ -57,7 +57,7 @@ public class AppService {
 
     public UserDTO getUser(Long id) {
         var res = userRepository.findUserById(id).orElseThrow();
-        return new UserDTO(res.getUsername(), res.getEmail(), res.getCreated_at());
+        return new UserDTO(res.getUsername(), res.getEmail(), res.getTg_id(), res.getCreated_at());
     }
 
     @Transactional

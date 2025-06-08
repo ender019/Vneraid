@@ -1,8 +1,10 @@
 package com.vneraid.botservice.controllers;
 
 import com.vneraid.botservice.dtos.*;
+import com.vneraid.botservice.entities.Submit;
 import com.vneraid.botservice.repository.UserRepository;
 import com.vneraid.botservice.services.AppService;
+import com.vneraid.botservice.services.AuthService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -19,12 +21,22 @@ public class AppController {
     private AppService appService;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private AuthService authService;
 
     @GetMapping("/user/{id}")
     public UserDTO getUser(@PathVariable Long id) {
         log.info("App Get User Endpoint");
         log.debug("User Id: {}", id);
         return appService.getUser(id);
+    }
+
+    @GetMapping("/user/{id}/verificate")
+    public Map<String, String> verUser(@PathVariable Long id) {
+        log.info("Gen Hash User Endpoint");
+        log.debug("User Id: {}", id);
+        String hash = authService.gen_hash(id);
+        return Map.of("hash", hash);
     }
 
     @GetMapping("/user/{id}/sessions")
