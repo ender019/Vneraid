@@ -10,6 +10,7 @@ import com.vneraid.botservice.repository.ConnectionRepository;
 import com.vneraid.botservice.repository.SessionRepository;
 import com.vneraid.botservice.repository.UserRepository;
 import com.vneraid.botservice.repository.WarningRepository;
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,6 +18,8 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
+
+import java.util.NoSuchElementException;
 
 @Slf4j
 @Service
@@ -57,10 +60,13 @@ public class BotService {
         log.info("Response is: " + res);
         if (res == 1) {
             var user = warningRepository.findByUser_id(Long.valueOf(message.user_id())).orElse(new Warning());
-            var ses = sessionRepository.findSessionByGroup_id(message.group_id()).orElseThrow();
+            var ses = sessionRepository.findSessionByGroup_id(message.group_id()).orElseThrow(
+                    () -> new NoSuchElementException("Session not found")
+            );
             user.setUser_id(message.user_id());
             user.setSession(ses);
             user.setWarns(1);
+            if(user.getBaned()) return 2;
             if (user.getWarns() + 1 == ses.getMaxWarn()) {
                 res = 2;
                 user.setBaned(true);
@@ -78,9 +84,18 @@ public class BotService {
         userRepository.save(user);
     }
 
+    @Transactional
     public void addSession(String user_id, String session_id, String group_name) {
         var ses = sessionRepository.save(new Session(session_id, group_name));
         var user = userRepository.findUserByTg_id(user_id).orElseThrow();
         connectionRepository.save(new Connection(user, ses, "admin"));
+    }
+
+    @Transactional
+    public void delSession(String session_id) {
+        var ses = sessionRepository.findSessionByGroup_id(session_id).orElseThrow(
+                () -> new NoSuchElementException("Session not found")
+        );
+        sessionRepository.deleteSessionById(ses.getId());
     }
 }

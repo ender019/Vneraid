@@ -17,4 +17,6 @@ public interface SessionRepository extends JpaRepository<Session, Long> {
 
     @Query("select s from Connection c join Session s on c.session.id = s.id where c.user.id = :id and c.role = :role")
     public List<Session> findRoleSessionByUserId(long id, String role);
+
+    public void deleteSessionById(Long id);
 }

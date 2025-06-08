@@ -29,6 +29,13 @@ public class BotController {
         botService.addSession(message.user_id(), message.group_id(), message.group_name());
     }
 
+    @DeleteMapping("/session/del")
+    public void del_session(@RequestBody String group_id) {
+        log.info("Bot Delete Session Endpoint");
+        log.debug("Group id: {}", group_id);
+        botService.delSession(group_id);
+    }
+
     @PutMapping("/vereficate")
     public void vereficate(@RequestBody String tg_id) {
         log.info("Bot Vereficate Endpoint");
