@@ -141,6 +141,7 @@
 }
 
 .form-group input[type="text"],
+.form-group input[type="number"],
 .form-group select {
     width: 100%;
     padding: 10px;
@@ -154,18 +155,93 @@
 }
 
 .save-button {
-    background: #3498db;
+    padding: 8px 16px;
+    background-color: #4CAF50; /* Green */
     color: white;
     border: none;
-    padding: 12px 25px;
     border-radius: 4px;
-    font-size: 16px;
     cursor: pointer;
-    transition: background 0.3s;
+    font-size: 16px;
+    transition: all 0.3s ease;
 }
 
 .save-button:hover {
-    background: #2980b9;
+    background-color: #45a049; /* Darker green */
+    transform: translateY(-1px);
+}
+
+.save-button:active {
+    transform: translateY(1px);
+}
+
+.save-button.disabled {
+    background-color: #cccccc;
+    color: #666666;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.save-button.disabled:hover {
+    background-color: #cccccc;
+}
+
+.collaborators-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.collaborator-tag {
+  display: inline-flex;
+  align-items: center;
+  background-color: #e0f2fe;
+  padding: 4px 8px;
+  border-radius: 16px;
+  border: 1px solid #bae6fd;
+}
+
+.collaborator-tag .username {
+  margin-right: 4px;
+  font-size: 14px;
+}
+
+.collaborator-tag .remove-btn {
+  background: none;
+  border: none;
+  color: #0369a1;
+  cursor: pointer;
+  font-size: 16px;
+  line-height: 1;
+  padding: 0 0 0 4px;
+}
+
+.collaborator-tag.add-collaborator {
+  background: none;
+  border: none;
+  padding: 0;
+}
+
+.collaborator-tag.add-collaborator .add-input {
+  border: none;
+  outline: none;
+  padding: 4px 8px;
+  width: 100px;
+  background: transparent;
+}
+
+.collaborator-tag.add-collaborator .add-input::placeholder {
+  color: #64748b;
+}
+
+input[type="hidden"] {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
 }
 
 @media (max-width: 768px) {

@@ -2,16 +2,19 @@ import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { FiEdit3 } from 'react-icons/fi';
 
+
 import '../static/list.css';
 
-const List = ({ isOwned }) => {
+const List = ({ isOwned, sessions = []  }) => {
 
-  const sessions = [
-    { id: '1', name: 'Технопарк', description: 'Handles customer inquiries 24/7', status: 'active' },
-    { id: '2', name: 'ВК', description: 'Helps qualify leads and book meetings', status: 'active' },
-    { id: '3', name: 'Чат №1', description: 'Answers frequently asked questions', status: 'inactive' },
-    { id: '4', name: 'Чат раз два три', description: 'Gathers user feedback automatically', status: 'active' },
-  ];
+  // const [sessions, setssions] = useState(null);
+
+  // useEffect(() => {
+  //       axios.get(`http://localhost:8000/api/u/${username}`)
+  //       .then(res => setProfile(res.data))
+  //       .catch(err => console.error('Error loading profile:', err));
+  // }, [username]);
+
 
   const navigate = useNavigate();
 
@@ -26,9 +29,10 @@ const List = ({ isOwned }) => {
       });
 
       const data = await response.json();
+      let newSessionID = data.id;
       
       if (response.ok) {
-        navigate('/new', { state: { serverData: data } });
+        navigate('/session/${newSessionID}', { state: { serverData: data } });
       } else {
         console.error('Error:', data.message);
       }
@@ -36,8 +40,7 @@ const List = ({ isOwned }) => {
       console.error('Network error:', error);
     }
   };
-
-
+  
   return (
     <div className="list-container">
         
@@ -47,7 +50,7 @@ const List = ({ isOwned }) => {
             <Link to={`/session/${session.id}`} key={session.id} className="session-card">
                 <div className="session-info">
                 <h3 className="session-name">{session.name}</h3>
-                <p className="session-description">{session.description}</p>
+                <p className="session-description">Название чата: {session.group_name}</p>
                 </div>
                 <div className={`session-status ${session.status}`}>
                 {session.status === 'active' ? 'Active' : 'Inactive'}
@@ -55,7 +58,7 @@ const List = ({ isOwned }) => {
             </Link>
             ))}
             {isOwned ? (
-              <Link to={`/new`}  className="session-card" onClick={ createNew }>
+              <Link to="#"  className="session-card" onClick={ createNew }>
                 <div className="session-info">           
                   <h3 className="session-name"><FiEdit3 className="user-icon" /></h3>
                   <p className="session-description">add new</p>

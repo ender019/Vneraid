@@ -54,6 +54,12 @@
   letter-spacing: 0.5px;
 }
 
+.hash{
+  color: #6b7280;
+  font-size: 0.6em;
+  margin-left: 8px;
+}
+
 @media (max-width: 480px) {
   .profile-info {
     padding: 16px;
