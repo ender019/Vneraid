@@ -2,7 +2,7 @@ import json
 import aiohttp
 from dtos.message_dto import Message
 from aiogram.types import Message as TgMessage
-
+from aiogram.enums import ChatType  # Добавляем импорт
 
 async def send_message_to_service(message_dto: Message, original_message: TgMessage) -> int:
     """Отправка DTO на сервис и обработка ответа"""
@@ -15,7 +15,7 @@ async def send_message_to_service(message_dto: Message, original_message: TgMess
     print(f"📸 Media Attachment: {message_dto.media_attachment}")
     print(f"🎭 Sticker/GIF: {message_dto.sticker_or_gif_present}")
 
-    # Форматирование DTO в JSON согласно новой структуре
+    # Форматирование DTO в JSON
     dto_dict = {
         "user_id": message_dto.user_id,
         "group_id": message_dto.group_id,
@@ -44,13 +44,17 @@ async def send_message_to_service(message_dto: Message, original_message: TgMess
                     spam_flag = result.get('spam', 0)
                     print(f"🔄 Получен ответ: spam = {spam_flag}")
 
-                    # Обработка результатов
-                    if spam_flag == 2:  # Спам
-                        await original_message.delete()
-                        print("🚫 Сообщение удалено как спам")
-                    elif spam_flag == 1:  # Подозрение
-                        await original_message.reply("⚠️ Сообщение выглядит подозрительно!")
-                        print("⚠️ Отправлено предупреждение")
+                    # Удаляем сообщение ТОЛЬКО для групповых чатов при spam=2
+                    if spam_flag == 2:
+                        if original_message.chat.type in [ChatType.GROUP, ChatType.SUPERGROUP]:
+                            try:
+                                await original_message.delete()
+                                print("🚫 Сообщение удалено как спам")
+                            except Exception as e:
+                                print(f"Ошибка удаления сообщения: {e}")
+                        else:
+                            # Для личных чатов просто логируем
+                            print("⛔ Сообщение помечено как спам, но в ЛС удалить нельзя")
                 else:
                     print(f"⛔ Ошибка сервера: {response.status}")
     except Exception as e:

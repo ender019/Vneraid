@@ -1,7 +1,7 @@
 #handlers/base_handlers
-import asyncio
 import logging
 from aiogram import types, F, Router
+from aiogram.enums import ChatType
 
 from parsers.message_parser import parse_update_to_message_dto, parse_message_to_dto
 from services.message_service import send_message_to_service
@@ -26,8 +26,26 @@ async def handle_all_messages(message: types.Message):
         # Отправка на сервис и обработка результата
         spam_flag = await send_message_to_service(message_dto, message)
 
-        # Если спам - прекращаем обработку
+        # Обработка спама
         if spam_flag == 2:
+            # Удаление пользователя для групповых чатов
+            if message.chat.type in [ChatType.GROUP, ChatType.SUPERGROUP]:
+                try:
+                    # Блокируем и сразу разблокируем (эквивалент удаления)
+                    await message.chat.ban(user_id=message.from_user.id)
+                    await message.chat.unban(user_id=message.from_user.id)
+                    await message.answer(
+                        f"⛔ Пользователь {message.from_user.full_name} удален за спам!"
+                    )
+                    print(f"❌ Пользователь {message.from_user.id} удален")
+                except Exception as e:
+                    logging.error(f"Ошибка удаления пользователя: {e}")
+            return True  # Прерываем цепочку обработчиков
+
+        elif spam_flag == 1:
+            # Отправляем предупреждение
+            await message.reply("⚠️ Ваше сообщение выглядит подозрительно!")
+            print(f"⚠️ Отправлено предупреждение для {message.from_user.id}")
             return True  # Прерываем цепочку обработчиков
 
     except Exception as e:
